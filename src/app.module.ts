@@ -1,3 +1,4 @@
+import { join } from 'path';
 import { Category } from './course/models/category.model';
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -7,8 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { CourseModule } from './course/course.module';
 import { Course } from './course/models/course.model';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -28,11 +28,10 @@ import { join } from 'path';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '24h' },
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'upload'),
-    }),
+
     AdminModule,
     CourseModule,
+    CategoryModule,
   ],
   controllers: [],
   providers: [],

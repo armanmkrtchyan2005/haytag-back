@@ -20,4 +20,7 @@ export class CreateCourseDto {
   @IsNumber()
   @ApiProperty({ example: 1 })
   categoryId: number;
+
+  @ApiProperty({ type: 'string', format: 'binary' })
+  img: any;
 }

@@ -28,4 +28,7 @@ export class Admin extends Model<Admin, IAdmin> {
 
   @Column({ allowNull: false })
   password: string;
+
+  @Column({ allowNull: false, defaultValue: false })
+  isBlocked: boolean;
 }

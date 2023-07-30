@@ -9,6 +9,8 @@ import { EditAdminDto } from './dto/editAdmin.dto';
 
 @Injectable()
 export class AdminService {
+  static TIMER = 1000 * 60 * 60;
+
   constructor(
     @InjectModel(Admin) private adminRepository: typeof Admin,
     private jwtService: JwtService,
@@ -52,11 +54,16 @@ export class AdminService {
     return { message: 'Admin successfully updated' };
   }
 
-  async adminLogin(dto: LoginAdminDto) {
+  async adminLogin(session: Record<string, any>, dto: LoginAdminDto) {
+    if (!session.count) {
+      session.count = 0;
+    }
+
     const admin = await this.adminRepository.findOne({
       attributes: { include: ['password'] },
       where: { email: dto.email },
     });
+
     if (!admin) {
       throw new HttpException(
         'Email or password incorrect',
@@ -64,9 +71,22 @@ export class AdminService {
       );
     }
 
+    if (admin.isBlocked) {
+      throw new HttpException('Admin is blocked', HttpStatus.FORBIDDEN);
+    }
+
     const isPasswordValid = await bcrypt.compare(dto.password, admin.password);
 
     if (!isPasswordValid) {
+      session.count += 1;
+
+      if (session.count === 3) {
+        admin.isBlocked = true;
+        await admin.save();
+
+        setTimeout(() => {});
+      }
+
       throw new HttpException(
         'Email or password incorrect',
         HttpStatus.BAD_REQUEST,

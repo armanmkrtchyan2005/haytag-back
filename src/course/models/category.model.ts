@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Column, HasMany, Model, Table } from 'sequelize-typescript';
 import { Course } from './course.model';
 
 interface ICategory {
@@ -19,10 +19,11 @@ export class Category extends Model<Category, ICategory> {
   })
   id: number;
 
-  @ApiProperty({ example: 'Web - Front-end' })
+  @ApiProperty({ example: 'Category name' })
   @Column({ allowNull: false })
   value: string;
 
+  @ApiProperty({ isArray: true })
   @HasMany(() => Course)
-  courses: Course[];
+  courses: Course;
 }

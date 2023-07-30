@@ -1,3 +1,4 @@
+import { Category } from 'src/course/models/category.model';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   BelongsTo,
@@ -7,14 +8,15 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { Category } from './category.model';
+
+
 
 interface ICourse {
   name: string;
   description: string;
   img: string;
   price: number;
-  categoryId: number;
+  category: string;
 }
 
 @Table({
@@ -46,10 +48,10 @@ export class Course extends Model<Course, ICourse> {
   @Column({ allowNull: false })
   price: number;
 
-  @ApiProperty({ example: 'Course category id' })
+  @ApiProperty({example: 1})
   @ForeignKey(() => Category)
-  @Column({ allowNull: false })
-  categoryId: number;
+  @Column({allowNull: false})
+  categoryId: number
 
   @BelongsTo(() => Category)
   category: Category;

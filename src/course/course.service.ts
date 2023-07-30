@@ -1,16 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Course } from './models/course.model';
-import { Category } from './models/category.model';
-import { CreateCategoryDto } from './dto/createCategory.dto';
 import { CreateCourseDto } from './dto/createCourse.dto';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class CourseService {
-  constructor(
-    @InjectModel(Course) private courseRepository: typeof Course,
-    @InjectModel(Category) private categoryRepository: typeof Category,
-  ) {}
+  constructor(@InjectModel(Course) private courseRepository: typeof Course) {}
 
   async findAllCourses(): Promise<Course[]> {
     const courses = await this.courseRepository.findAll();
@@ -31,57 +28,50 @@ export class CourseService {
   }
 
   async createCourse(dto: CreateCourseDto, img: Express.Multer.File) {
-    return {
+    const course = await this.courseRepository.create({
       ...dto,
-      img,
-    };
-  }
-
-  async findAllCategories(): Promise<Category[]> {
-    const categories = await this.categoryRepository.findAll();
-
-    return categories;
-  }
-
-  async findOneCategory(id: number): Promise<Category> {
-    const category = await this.categoryRepository.findByPk(id, {
-      include: { all: true },
+      img: `/uploads/${img.filename}`,
     });
 
-    if (!category) {
-      throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
-    }
-
-    return category;
+    return course;
   }
 
-  async createCategory(dto: CreateCategoryDto) {
-    const newCategory = await this.categoryRepository.create(dto);
+  async updateCourse(
+    id: number,
+    dto: CreateCourseDto,
+    img: Express.Multer.File,
+  ) {
+    const course = await this.courseRepository.findByPk(id);
 
-    return newCategory;
-  }
-
-  async updateCategory(id: number, dto: CreateCategoryDto) {
-    const category = await this.categoryRepository.findByPk(id);
-
-    if (!category) {
-      throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+    if (!course) {
+      throw new HttpException('Course not found', HttpStatus.NOT_FOUND);
     }
 
-    const updatedCategory = await category.update(dto);
+    const fileName = course.img.split('/')[2];
 
-    return updatedCategory;
+    fs.rmSync(path.resolve('uploads', fileName), { force: true });
+
+    const updatedCourse = await course.update({
+      ...dto,
+      img: `/uploads/${img.filename}`,
+    });
+
+    return updatedCourse;
   }
 
-  async deleteCategory(id: number) {
-    const category = await this.categoryRepository.findByPk(id);
+  async deleteCourse(id: number) {
+    const course = await this.courseRepository.findByPk(id);
 
-    if (!category) {
-      throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+    if (!course) {
+      throw new HttpException('Course not found', HttpStatus.NOT_FOUND);
     }
 
-    const deletedCategory = await this.categoryRepository.describe();
+    const fileName = course.img.split('/')[2];
 
-    return deletedCategory;
+    fs.rmSync(path.resolve('uploads', fileName), { force: true });
+
+    const deletedCourse = await course.destroy();
+
+    return deletedCourse;
   }
 }

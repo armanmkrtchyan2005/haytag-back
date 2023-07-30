@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Session,
   UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
@@ -13,8 +14,8 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
-  ApiSecurity,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Admin } from './admin.model';
 import { CreateAdminDto } from './dto/createAdmin.dto';
@@ -29,9 +30,12 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Create admin' })
   @ApiResponse({ status: 201, type: Admin })
-  // @UseGuards(AuthGuard)
+  @ApiUnauthorizedResponse({
+    schema: { example: { status: 401, message: 'Unauthorized' } },
+  })
   @ApiBearerAuth()
   @Post('/')
+  @UseGuards(AuthGuard)
   createAdmin(@Body() adminDto: CreateAdminDto) {
     return this.adminService.create(adminDto);
   }
@@ -39,33 +43,36 @@ export class AdminController {
   @ApiOperation({ summary: 'Login admin' })
   @ApiResponse({ status: 201 })
   @Post('/login')
-  adminLogin(@Body() adminDto: LoginAdminDto) {
-    return this.adminService.adminLogin(adminDto);
+  adminLogin(
+    @Session() session: Record<string, any>,
+    @Body() adminDto: LoginAdminDto,
+  ) {
+    return this.adminService.adminLogin(session, adminDto);
   }
 
   @ApiOperation({ summary: 'Get admins' })
   @ApiResponse({ status: 200, type: [Admin] })
-  @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @Get('/')
+  @UseGuards(AuthGuard)
   getAdmins() {
     return this.adminService.findAll();
   }
 
   @ApiOperation({ summary: 'Get admin' })
   @ApiResponse({ status: 200, type: Admin })
-  @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @Get('/:id')
+  @UseGuards(AuthGuard)
   getAdmin(@Param('id', ParseIntPipe) id: number) {
     return this.adminService.find(id);
   }
 
   @ApiOperation({ summary: 'Edit admin password' })
   @ApiResponse({ status: 200, type: Admin })
-  @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @Patch('/:id')
+  @UseGuards(AuthGuard)
   editAdmin(@Param('id', ParseIntPipe) id: number, @Body() dto: EditAdminDto) {
     return this.adminService.edit(id, dto);
   }
