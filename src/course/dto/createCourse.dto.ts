@@ -16,6 +16,11 @@ export class CreateCourseDto {
   @ApiProperty({ example: 45000 })
   price: number;
 
+  @IsNumber()
+  @Min(1000)
+  @ApiProperty({ example: 35000, required: false })
+  discountedPrice?: number;
+
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty({ example: 1 })

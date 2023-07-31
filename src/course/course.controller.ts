@@ -23,7 +23,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Course } from './models/course.model';
+import { Course } from './course.model';
 
 @ApiTags('Courses')
 @Controller('courses')

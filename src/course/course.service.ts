@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Course } from './models/course.model';
+import { Course } from './course.model';
 import { CreateCourseDto } from './dto/createCourse.dto';
 import * as fs from 'fs';
 import * as path from 'path';

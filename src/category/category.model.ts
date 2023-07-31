@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, HasMany, Model, Table } from 'sequelize-typescript';
-import { Course } from './course.model';
+import { Course } from '../course/course.model';
 
 interface ICategory {
   value: string;

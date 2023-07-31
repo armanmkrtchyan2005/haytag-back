@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { Category } from './course/models/category.model';
+import { Category } from './category/category.model';
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AdminModule } from './admin/admin.module';
@@ -7,8 +7,10 @@ import { Admin } from './admin/admin.model';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { CourseModule } from './course/course.module';
-import { Course } from './course/models/course.model';
+import { Course } from './course/course.model';
 import { CategoryModule } from './category/category.module';
+import { CadetModule } from './cadet/cadet.module';
+import { Cadet } from './cadet/cadet.model';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { CategoryModule } from './category/category.module';
       username: process.env.POSTGRES_USERNAME,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      models: [Admin, Course, Category],
+      models: [Admin, Course, Category, Cadet],
       autoLoadModels: true,
     }),
     JwtModule.register({
@@ -32,6 +34,7 @@ import { CategoryModule } from './category/category.module';
     AdminModule,
     CourseModule,
     CategoryModule,
+    CadetModule,
   ],
   controllers: [],
   providers: [],

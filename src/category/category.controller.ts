@@ -5,11 +5,18 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Category } from 'src/course/models/category.model';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Category } from 'src/category/category.model';
 import { CreateCategoryDto } from './dto/createCategory.dto';
+import { AuthGuard } from 'src/admin/auth.guard';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -31,7 +38,9 @@ export class CategoryController {
 
   @ApiOperation({ summary: 'Create category' })
   @ApiResponse({ status: 201, type: Category })
-  @Post('/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Post('/')
   create(@Body() dto: CreateCategoryDto) {
     return this.categoryService.create(dto);
   }

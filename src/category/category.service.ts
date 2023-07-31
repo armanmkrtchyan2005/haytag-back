@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Category } from 'src/course/models/category.model';
+import { Category } from 'src/category/category.model';
 import { CreateCategoryDto } from './dto/createCategory.dto';
 
 @Injectable()
