@@ -1,4 +1,3 @@
-import { join } from 'path';
 import { Category } from './category/category.model';
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';

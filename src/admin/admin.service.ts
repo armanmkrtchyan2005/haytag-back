@@ -5,7 +5,6 @@ import { Admin } from './admin.model';
 import { CreateAdminDto } from './dto/createAdmin.dto';
 import { LoginAdminDto } from './dto/loginAdmin.dto';
 import * as bcrypt from 'bcrypt';
-import { EditAdminDto } from './dto/editAdmin.dto';
 
 @Injectable()
 export class AdminService {
@@ -21,8 +20,8 @@ export class AdminService {
     return admins;
   }
 
-  async find(id: number): Promise<Admin> {
-    const admin = await this.adminRepository.findByPk(id, {
+  async find(adminPayload): Promise<Admin> {
+    const admin = await this.adminRepository.findByPk(adminPayload.id, {
       include: { all: true },
     });
 
@@ -54,11 +53,7 @@ export class AdminService {
     return { message: 'Admin successfully updated' };
   }
 
-  async adminLogin(session: Record<string, any>, dto: LoginAdminDto) {
-    if (!session.count) {
-      session.count = 0;
-    }
-
+  async adminLogin(dto: LoginAdminDto) {
     const admin = await this.adminRepository.findOne({
       attributes: { include: ['password'] },
       where: { email: dto.email },
@@ -71,22 +66,9 @@ export class AdminService {
       );
     }
 
-    if (admin.isBlocked) {
-      throw new HttpException('Admin is blocked', HttpStatus.FORBIDDEN);
-    }
-
     const isPasswordValid = await bcrypt.compare(dto.password, admin.password);
 
     if (!isPasswordValid) {
-      session.count += 1;
-
-      if (session.count === 3) {
-        admin.isBlocked = true;
-        await admin.save();
-
-        setTimeout(() => {});
-      }
-
       throw new HttpException(
         'Email or password incorrect',
         HttpStatus.BAD_REQUEST,
@@ -95,17 +77,5 @@ export class AdminService {
     const token = await this.jwtService.signAsync({ id: admin.id });
 
     return { token };
-  }
-
-  async edit(id: number, dto: EditAdminDto) {
-    const admin = await this.adminRepository.findByPk(id, {
-      include: { all: true },
-    });
-
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
-
-    await admin.update({ password: hashedPassword });
-
-    return { message: 'Admin successfully updated' };
   }
 }

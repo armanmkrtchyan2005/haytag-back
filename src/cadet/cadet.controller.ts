@@ -1,8 +1,16 @@
-import { Body, Controller, Get, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CadetService } from './cadet.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateCadetDto } from './dto/createCadet.dto';
 import { Cadet } from './cadet.model';
+import { AuthGuard } from 'src/admin/auth.guard';
 
 @ApiTags('Cadets')
 @Controller('cadets')
@@ -11,6 +19,7 @@ export class CadetController {
 
   @ApiOperation({ summary: 'Get Cadets' })
   @ApiResponse({ status: HttpStatus.OK, type: [Cadet] })
+  @UseGuards(AuthGuard)
   @Get('/')
   findAll() {
     return this.cadetService.findAll();
