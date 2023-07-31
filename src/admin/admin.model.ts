@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, DataType, IsEmail, Model, Table } from 'sequelize-typescript';
+import { Column, IsEmail, Model, Table } from 'sequelize-typescript';
 
 interface IAdmin {
   email: string;
@@ -28,7 +28,4 @@ export class Admin extends Model<Admin, IAdmin> {
 
   @Column({ allowNull: false })
   password: string;
-
-  @Column({ allowNull: false, defaultValue: false })
-  isBlocked: boolean;
 }

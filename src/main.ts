@@ -6,6 +6,7 @@ import { join } from 'path';
 import * as express from 'express';
 import * as session from 'express-session';
 import helmet from 'helmet';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const port = process.env.PORT ?? 8080;
@@ -23,6 +24,8 @@ async function bootstrap() {
   );
 
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
+
+  app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
     .setTitle('HayTag')
