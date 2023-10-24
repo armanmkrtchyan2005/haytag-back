@@ -7,7 +7,7 @@ jobs:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
-    container: node:10.18-jessie
+    container: node:20.x
 
     # Service containers to run with `container-job`
     services:
@@ -35,12 +35,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build next js
+      - name: Build nest js
       run: npm run build
 
       - name: Start application
         run: npm run start:prod
-        # Environment variables used by the `client.js` script to create a new PostgreSQL table.
+
         env:
           PORT: 8080
           POSTGRES_HOST: localhost
