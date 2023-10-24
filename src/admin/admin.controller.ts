@@ -13,7 +13,7 @@ import { LoginAdminDto } from './dto/loginAdmin.dto';
 import { Request } from 'express';
 
 @ApiTags('Admins')
-@Controller('admins')
+@Controller('admin')
 export class AdminController {
   constructor(private adminService: AdminService) {}
 
@@ -36,7 +36,7 @@ export class AdminController {
   @ApiOperation({ summary: 'Get admin' })
   @ApiResponse({ status: 200, type: Admin })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Get('/')
   getAdmin(@Req() req: Request) {
     return this.adminService.find(req['admin']);

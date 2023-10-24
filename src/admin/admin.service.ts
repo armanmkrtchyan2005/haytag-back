@@ -5,6 +5,7 @@ import { Admin } from './admin.model';
 import { CreateAdminDto } from './dto/createAdmin.dto';
 import { LoginAdminDto } from './dto/loginAdmin.dto';
 import * as bcrypt from 'bcrypt';
+import { Identifier } from 'sequelize';
 
 @Injectable()
 export class AdminService {
@@ -20,7 +21,7 @@ export class AdminService {
     return admins;
   }
 
-  async find(adminPayload): Promise<Admin> {
+  async find(adminPayload: { id: Identifier }): Promise<Admin> {
     const admin = await this.adminRepository.findByPk(adminPayload.id, {
       include: { all: true },
     });
